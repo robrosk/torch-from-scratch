@@ -1,4 +1,4 @@
-## NNFromScratch (mini PyTorch, for learning)
+## mini-torch (mini PyTorch, for learning)
 
 This repo is my **living “from-scratch” reimplementation of a tiny subset of PyTorch**, built to document and reinforce my learning in machine learning over time. Expect frequent iteration: APIs may change, pieces may be incomplete, and implementations will steadily improve.
 
