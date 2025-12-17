@@ -51,7 +51,7 @@ def sample_variance(X, axis=None, keepdims=False, correction=1):
         raise ValueError(f"Need n > correction (got n={n}, correction={correction}).")
 
     centered = center(X, axis=axis)
-    return (centered ** 2).sum(axis=axis, keepdims=keepdims) / denomoh 
+    return (centered ** 2).sum(axis=axis, keepdims=keepdims) / denom 
 
 def sample_std(X, axis=0, keepdims=False, correction=1, eps=0.0):
     """
