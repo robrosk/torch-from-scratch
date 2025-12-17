@@ -1,29 +1,31 @@
 import numpy as np
 
-def cov(X, correction=1, rowvar=True):
-    """
-    Returns the covariance matrix of the variables in X.
+from .sample import _assert_ndarray, _count_along_axes, sample_mean, center, sample_variance, sample_std
 
-    Paramters:
-        - X: array_like
-            A 1-D or 2-D array containing multiple variables and observations.
-            Each row of X represents a variable, and each column represents an
-            observation of all variables.
-        - correction: int, optional
-            - the degrees-of-freedom correction in the denominator. The adjustment factor. The default is 1.
-        - rowvar: bool, optional
-            If rowvar is True (default), then treat rows as variables and columns as observations;
-            otherwise, treat columns as variables and rows as observations.
-    Returns:
-    out: ndarray
-        The covariance matrix of the variables.
-        If rowvar is True, the covariance matrix is (N,N), where N is
-        the number of variables.
-        If rowvar is False, the covariance matrix is (N,N), where N is
-        the number of observations.
+def cov(X, Y=None, *,  rowvar=True, correction=1):
     """
-    raise NotImplementedError("cov is not implemented yet")
+    Sample covariance.
 
+    If Y is None:
+        - X is 1D -> returns Var(x)
+        - X is 2D -> returns covariance matrix of the variables in X
+    if Y is provided:
+        - X and Y are 1D -> returns Cov(X, Y) (scalar)
+        
+    """
+    X = _assert_ndarray(X)
+
+    if Y is None:
+        if X.ndim == 1:
+            return sample_variance(X, axis=None, keepdims=False, correction=correction)
+        elif X.ndim == 2:
+            return sample_variance(X, axis=1, keepdims=True, correction=correction)
+        else:
+            raise ValueError(f"X must be 1D or 2D, got {X.ndim}D")
+
+    Y = _assert_ndarray(Y)
+
+    pass
 
 def corrcoef(X):
     """

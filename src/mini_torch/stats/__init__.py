@@ -5,8 +5,9 @@ from .sample import (
     center,
     sample_variance,
     sample_std,
-    sample_cov,
     standardize,
+    _assert_ndarray,
+    _count_along_axes,
 )
 
 from .covariance import cov, corrcoef
@@ -16,10 +17,13 @@ __all__ = [
     "center",
     "sample_variance",
     "sample_std",
-    "sample_cov",
     "standardize",
+    "_assert_ndarray",
+    "_count_along_axes",
     "cov",
     "corrcoef",
 ]
+
+
 
 

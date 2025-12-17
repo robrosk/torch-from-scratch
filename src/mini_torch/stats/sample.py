@@ -9,8 +9,15 @@ axis=1 means "go across the columns" (operate row-wise)
 """
 
 def _assert_ndarray(X):
-    assert isinstance(X, np.ndarray), f"X must be a numpy.ndarray, got {type(X).__name__}"
-    return X
+    if not isinstance(X, np.ndarray):
+        raise TypeError(f"X must be a numpy.ndarray, got {type(X).__name__}")
+    return np.asarray(X, dtype=np.float64)
+
+def _count_along_axes(X, axis):
+    if axis is None:
+        return X.size
+    axes = (axis,) if isinstance(axis, int) else axis
+    return prod(X.shape[a] for a in axes)
 
 def sample_mean(X, axis=None, keepdims=False):
     """
@@ -19,53 +26,51 @@ def sample_mean(X, axis=None, keepdims=False):
     - axis=int/tuple: mean over those axes
     - keepdims=True: keeps reduced axes as size-1 for broadcasting
     """
-    _assert_ndarray(X)
-    if axis is None:
-        n = X.size
-    else:
-        axes = (axis,) if isinstance(axis, int) else axis
-        n = prod(X.shape[a] for a in axes)
-
-    X.astype(np.float64)
-    
+    X = _assert_ndarray(X)
+    n = _count_along_axes(X, axis)
     return X.sum(axis=axis, keepdims=keepdims) / n
-    
 
-def center(X, axis=0):
+def center(X, axis=None):
     """
     Returns the centered version of the input array.
     """
-    _assert_ndarray(X)
+    X = _assert_ndarray(X)
     return X - sample_mean(X, axis=axis, keepdims=True)
 
-def sample_variance(X, axis=0, keepdims=False):
+def sample_variance(X, axis=None, keepdims=False, correction=1):
     """
     Returns the sample variance of the input array.
-    """
-    _assert_ndarray(X)
-    raise NotImplementedError("sample_variance is not implemented yet")
 
-def sample_std(X, axis=0, keepdims=False):
+    The unbiased sample variance when correction = 1, 
+    the maximum likelihood estimate when correction = 0.
+    """
+    X = _assert_ndarray(X)
+    n = _count_along_axes(X, axis)
+    denom = n - correction
+    if denom <= 0:
+        raise ValueError(f"Need n > correction (got n={n}, correction={correction}).")
+
+    centered = center(X, axis=axis)
+    return (centered ** 2).sum(axis=axis, keepdims=keepdims) / denomoh 
+
+def sample_std(X, axis=0, keepdims=False, correction=1, eps=0.0):
     """
     Returns the sample standard deviation of the input array.
     """
-    _assert_ndarray(X)
-    raise NotImplementedError("sample_std is not implemented yet")
+    X = _assert_ndarray(X)
+    var = sample_variance(X, axis=axis, keepdims=keepdims, correction=correction)
+    return np.sqrt(var + eps)
 
-def sample_cov(X, axis=0, keepdims=False):
+def standardize(X, axis=None, keepdims=False, eps=1e-8, correction=1):
     """
-    Returns the sample covariance of the input array.
-    """
-    _assert_ndarray(X)
-    # Placeholder: true covariance returns a matrix; keeping as TODO for now.
-    raise NotImplementedError("sample_cov is not implemented yet")
+    Z-score standardization along `axis`:
+      Z = (X - mean) / (std + eps)
 
-def standardize(X):
-    """
-    Returns the standardized version of the input array.
-    - z-score standardization: subtract the mean and divide by the standard deviation.
+    axis: dimension(s) to compute mean/std over (int or tuple)
+    keepdims: keep reduced dims for broadcasting
+    correction: passed to sample_std (0 for MLE, 1 for unbiased)
     """
     _assert_ndarray(X)
-    mu = sample_mean(X, axis=0, keepdims=True)
-    sigma = np.std(X, axis=0, ddof=1, keepdims=True)
-    return (X - mu) / sigma
+    mu = sample_mean(X, axis=axis, keepdims=True)
+    sigma = sample_std(X, axis=axis, keepdims=True, correction=correction)
+    return (X - mu) / (sigma + eps)
