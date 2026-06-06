@@ -31,6 +31,9 @@ class NeuralNetwork:
 
     def predict(self, x: np.ndarray) -> np.ndarray:
         return self.forward_prop(x).T[0]
+    
+    def back(self, loss: float):
+        pass
 
 
 def main():

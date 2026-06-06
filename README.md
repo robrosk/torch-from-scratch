@@ -12,16 +12,15 @@ This repo is my **living “from-scratch” reimplementation of a tiny subset of
 
 ```text
 src/
-  mini_torch/
     __init__.py
-    nn/
-      __init__.py
-      ActivationFunctions.py
-      Layers.py
-      LossFunctions.py
-      NeuralNetwork.py
-    math/
-      __init__.py
+  nn/
+    __init__.py
+    ActivationFunctions.py
+    Layers.py
+    LossFunctions.py
+    NeuralNetwork.py
+  math/
+    __init__.py
 ```
 
 ## Roadmap (informal)
