@@ -1,4 +1,4 @@
-"""Linear algebra utilities for mini_torch."""
+"""Linear algebra utilities for the src package."""
 
 from .psd import is_psd, make_psd
 

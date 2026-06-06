@@ -1,21 +1,24 @@
 """
-Neural network building blocks for mini_torch.
+Neural network building blocks for the src package.
 
 Exports the most commonly-used symbols for a clean import surface:
-    from mini_torch.nn import DenseLayer, NeuralNetwork, ReLU, MeanSquaredError
+    from src.nn import DenseLayer, NeuralNetwork, ReLU, MeanSquaredError
 """
 
-from .ActivationFunctions import (
+from .modules import (
     ActivationFunction,
     ReLU,
     LeakyReLU,
     Sigmoid,
     Tanh,
     Softmax,
+    Layer,
+    DenseLayer,
+    LossFunction,
+    MeanSquaredError,
+    CrossEntropyLoss,
 )
-from .Layers import Layer, DenseLayer
-from .LossFunctions import LossFunction, MeanSquaredError, CrossEntropyLoss
-from .NeuralNetwork import NeuralNetwork
+from .neural_network import NeuralNetwork
 
 __all__ = [
     "ActivationFunction",
@@ -29,7 +32,7 @@ __all__ = [
     "LossFunction",
     "MeanSquaredError",
     "CrossEntropyLoss",
-    "NeuralNetwork",
+    "neural_network",
 ]
 
 

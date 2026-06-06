@@ -6,13 +6,13 @@ import numpy as np
 
 def _load_sample_module():
     """
-    Load `src/mini_torch/stats/sample.py` directly (without importing the package),
+    Load `src/stats/sample.py` directly (without importing the package),
     so unfinished modules in package __init__ files don't break test collection.
     """
-    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
-    sample_path = os.path.join(repo_root, "src", "mini_torch", "stats", "sample.py")
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    sample_path = os.path.join(repo_root, "src", "stats", "sample.py")
 
-    spec = importlib.util.spec_from_file_location("mini_torch_stats_sample", sample_path)
+    spec = importlib.util.spec_from_file_location("stats_sample", sample_path)
     assert spec and spec.loader, "Could not load sample.py module spec"
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

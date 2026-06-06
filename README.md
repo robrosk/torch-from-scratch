@@ -4,23 +4,47 @@ This repo is my **living “from-scratch” reimplementation of a tiny subset of
 
 ## What’s here right now
 
-- **`mini_torch`**: a small Python package under `src/mini_torch/`
-  - **`mini_torch.nn`**: core neural-network building blocks (layers, activations, losses, simple network wrapper)
-  - **`mini_torch.math`**: placeholder for math utilities (will grow over time)
+- **`src`**: a small Python package at `src/`
+  - **`src.nn`**: core neural-network building blocks (layers, activations, losses, simple network wrapper)
+  - **`src.linalg`**: linear-algebra utilities (matrix decompositions, PSD helpers)
+  - **`src.stats`**: sample statistics (mean, variance, covariance, correlation)
+  - **`src.calculus`**: calculus utilities — Jacobian, Hessian, etc. (work in progress)
+  - **`src.autograd`**: automatic differentiation engine (planned)
+  - **`src.graph`**: computation-graph primitives backing autograd (work in progress)
 
 ## Repository structure
 
 ```text
 src/
-    __init__.py
+  __init__.py
   nn/
     __init__.py
-    ActivationFunctions.py
-    Layers.py
-    LossFunctions.py
-    NeuralNetwork.py
-  math/
+    neural_network.py        # composes layers into a trainable network
+    modules/                 # building blocks, grouped by family (mirrors torch.nn.modules)
+      __init__.py
+      activation.py          # ReLU, LeakyReLU, Sigmoid, Tanh, Softmax
+      layers.py              # Layer, DenseLayer
+      loss.py                # MeanSquaredError, CrossEntropyLoss
+  linalg/
     __init__.py
+    decomp.py
+    psd.py
+  stats/
+    __init__.py
+    sample.py
+    covariance.py
+  calculus/                  # calculus utilities — Jacobian, Hessian (work in progress)
+    __init__.py
+    jacobian.py
+    hessian.py
+  autograd/                  # automatic differentiation engine (planned)
+    __init__.py
+  graph/                     # computation graph backing autograd (work in progress)
+    __init__.py
+    graph.py
+    modules/
+      nodes.py
+      edges.py
 ```
 
 ## Roadmap (informal)

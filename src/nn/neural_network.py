@@ -1,8 +1,6 @@
 import numpy as np
 
-from .Layers import Layer, DenseLayer
-from .ActivationFunctions import ReLU, Softmax
-from .LossFunctions import LossFunction, MeanSquaredError
+from .modules import Layer, DenseLayer, ReLU, Softmax, LossFunction, MeanSquaredError
 
 LEARNING_RATE = 0.01
 

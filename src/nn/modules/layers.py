@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from .ActivationFunctions import ActivationFunction
+from .activation import ActivationFunction
 
 
 class Layer(ABC):

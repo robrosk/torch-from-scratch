@@ -1,4 +1,4 @@
-"""Statistics utilities for mini_torch."""
+"""Statistics utilities for the src package."""
 
 from .sample import (
     sample_mean,
