@@ -5,6 +5,7 @@ Exports the most commonly-used symbols for a clean import surface:
     from src.nn import DenseLayer, NeuralNetwork, ReLU, MeanSquaredError
 """
 
+from . import functional
 from .modules import (
     ActivationFunction,
     ReLU,
@@ -32,6 +33,7 @@ __all__ = [
     "LossFunction",
     "MeanSquaredError",
     "CrossEntropyLoss",
+    "functional",
     "neural_network",
 ]
 

@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from src.utilities import Tensor
+
 from .activation import ActivationFunction
 
 
@@ -10,52 +12,59 @@ class Layer(ABC):
         pass
 
     @abstractmethod
-    def forward(self, inputs):
+    def forward(self, inputs: Tensor) -> Tensor:
         raise NotImplementedError("Subclasses must implement forward()")
-
-    @abstractmethod
-    def backward(self, inputs: np.ndarray, output_gradients: np.ndarray) -> np.ndarray:
-        raise NotImplementedError("Subclasses must implement backward()")
 
     @abstractmethod
     def update(self, learning_rate: float):
         raise NotImplementedError("Subclasses must implement update()")
 
     @abstractmethod
-    def get_weights(self) -> np.ndarray:
+    def parameters(self) -> list[Tensor]:
+        raise NotImplementedError("Subclasses must implement parameters()")
+
+    @abstractmethod
+    def zero_grad(self):
+        raise NotImplementedError("Subclasses must implement zero_grad()")
+
+    @abstractmethod
+    def get_weights(self) -> Tensor:
         raise NotImplementedError("Subclasses must implement get_weights()")
 
     @abstractmethod
-    def get_biases(self) -> np.ndarray:
+    def get_biases(self) -> Tensor:
         raise NotImplementedError("Subclasses must implement get_biases()")
 
 
 class DenseLayer(Layer):
     def __init__(self, input_size, output_size, activation_function: ActivationFunction):
         # W in output_size x input_size
-        self.weights = 0.01 * np.random.randn(output_size, input_size)
+        self.weights = Tensor(0.01 * np.random.randn(output_size, input_size), requires_grad=True)
         # b in output_size x 1
-        self.biases = np.zeros((output_size, 1))
-        # dL/dW in output_size x input_size
-        self.weights_gradient = np.zeros_like(self.weights)
-        # dL/db in output_size x 1
-        self.biases_gradient = np.zeros_like(self.biases)
+        self.biases = Tensor(np.zeros((output_size, 1)), requires_grad=True)
         self.activation_function = activation_function
 
-    def forward(self, inputs: np.ndarray) -> np.ndarray:
-        return self.activation_function.forward(np.dot(self.weights, inputs) + self.biases)
-
-    def backward(self, inputs: np.ndarray, output_gradients: np.ndarray) -> np.ndarray:
-        return 0
+    def forward(self, inputs: Tensor) -> Tensor:
+        # NOTE: + self.biases broadcasts (out, batch) + (out, 1); its backward
+        # must sum the bias grad over axis=1 (keepdims=True) to undo the broadcast.
+        return self.activation_function.forward(self.weights @ inputs + self.biases)
 
     def update(self, learning_rate: float):
-        self.weights -= learning_rate * self.weights_gradient
-        self.biases -= learning_rate * self.biases_gradient
+        # plain SGD step on .data — outside the graph, safe to mutate in place
+        if self.weights.grad is not None:
+            self.weights.data -= learning_rate * self.weights.grad
+        if self.biases.grad is not None:
+            self.biases.data -= learning_rate * self.biases.grad
 
-    def get_weights(self) -> np.ndarray:
+    def parameters(self) -> list[Tensor]:
+        return [self.weights, self.biases]
+
+    def zero_grad(self):
+        self.weights.grad = None
+        self.biases.grad = None
+
+    def get_weights(self) -> Tensor:
         return self.weights
 
-    def get_biases(self) -> np.ndarray:
+    def get_biases(self) -> Tensor:
         return self.biases
-
-

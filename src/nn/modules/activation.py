@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
-import numpy as np
+from src.utilities import Tensor
+
+from .. import functional as F
 
 
 class ActivationFunction(ABC):
@@ -8,46 +10,33 @@ class ActivationFunction(ABC):
         pass
 
     @abstractmethod
-    def activate(self, inputs):
+    def activate(self, inputs: Tensor) -> Tensor:
         raise NotImplementedError("Subclasses must implement activate()")
 
-    def forward(self, inputs):
+    def forward(self, inputs: Tensor) -> Tensor:
         return self.activate(inputs)
 
 
 class ReLU(ActivationFunction):
-    def activate(self, inputs):
-        return np.maximum(np.zeros_like(inputs), inputs)
+    def activate(self, inputs: Tensor) -> Tensor:
+        return F.relu(inputs)
 
 
 class LeakyReLU(ActivationFunction):
-    def activate(self, inputs):
-        return np.maximum(0.01 * inputs, inputs)
+    def activate(self, inputs: Tensor) -> Tensor:
+        return F.leaky_relu(inputs)
 
 
 class Sigmoid(ActivationFunction):
-    def activate(self, inputs):
-        # numerically stable sigmoid
-        out = np.empty_like(inputs)
-        pos = inputs >= 0
-        neg = ~pos
-        out[pos] = 1 / (1 + np.exp(-inputs[pos]))
-        exp_x = np.exp(inputs[neg])  # safe because inputs[neg] < 0
-        out[neg] = exp_x / (1 + exp_x)
-        return out
+    def activate(self, inputs: Tensor) -> Tensor:
+        return F.sigmoid(inputs)
 
 
 class Tanh(ActivationFunction):
-    def activate(self, inputs):
-        # numpy.tanh is more numerically stable than exp-based alternatives
-        return np.tanh(inputs)
+    def activate(self, inputs: Tensor) -> Tensor:
+        return F.tanh(inputs)
 
 
 class Softmax(ActivationFunction):
-    def activate(self, inputs):
-        # softmax over classes (axis=0 aka along the columns)
-        shifted = inputs - np.max(inputs, axis=0, keepdims=True)
-        exps = np.exp(shifted)
-        return exps / np.sum(exps, axis=0, keepdims=True)
-
-
+    def activate(self, inputs: Tensor) -> Tensor:
+        return F.softmax(inputs)
